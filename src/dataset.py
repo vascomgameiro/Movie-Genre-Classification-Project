@@ -1,4 +1,11 @@
+import string
+
+import nltk
 import pandas as pd
+from nltk.corpus import stopwords, wordnet
+from nltk.tokenize import word_tokenize
+from textblob import TextBlob
+
 
 def get_data(path: str, columns: list[str]) -> pd.DataFrame:
 
@@ -8,14 +15,6 @@ def get_data(path: str, columns: list[str]) -> pd.DataFrame:
             fields = line.strip().split('\t')
             data.append(fields)
     return pd.DataFrame(data, columns=columns)
-
-import string
-
-import nltk
-import pandas as pd
-from nltk.corpus import stopwords, wordnet
-from nltk.tokenize import word_tokenize
-from textblob import TextBlob
 
 # Ensure the required NLTK resources are downloaded
 nltk.download('punkt')
