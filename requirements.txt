@@ -10,3 +10,4 @@ seaborn
 skrub
 textblob
 mlextend
+rapidfuzz
