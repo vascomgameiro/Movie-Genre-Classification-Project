@@ -1,10 +1,12 @@
 from collections import Counter
 
 import matplotlib.pyplot as plt
+import nltk
 import numpy as np
 import pandas as pd
 import seaborn as sns
 from nltk.corpus import stopwords
+from sklearn.decomposition import PCA
 
 
 def plot_genre_distribution(df):
@@ -62,4 +64,156 @@ def plot_stopword_frequency(df: pd.DataFrame, column_name: str):
     plt.tight_layout()
     plt.show()
 
+def plot_correlation_matrix(stats_df):
+    """
+    Plot the correlation matrix of the text statistics.
+    
+    Parameters:
+    stats_df (pd.DataFrame): DataFrame containing the text statistics.
+    """
+    plt.figure(figsize=(10, 8))
+    correlation_matrix = stats_df.corr()
+    sns.heatmap(correlation_matrix, annot=True, cmap="coolwarm", fmt='.2f')
+    plt.title('Correlation Matrix of Text Statistics')
+    plt.show()
 
+def apply_pca(scaled_data, genre_labels):
+    """
+    Apply PCA to reduce the text statistics to two dimensions and plot the results, colored by genre labels.
+    
+    Parameters:
+    scaled_data (ndarray): Scaled data for PCA input.
+    genre_labels (pd.Series): The genre labels for each document.
+    
+    Returns:
+    pd.DataFrame: Transformed data in 2D.
+    PCA: The PCA object for further analysis.
+    """
+    # Apply PCA
+    pca = PCA(n_components=2)
+    pca_data = pca.fit_transform(scaled_data)
+
+    # Convert PCA result to DataFrame
+    pca_df = pd.DataFrame(pca_data, columns=['PCA1', 'PCA2'])
+    pca_df['Genre'] = genre_labels.values
+    
+    # Plot PCA result, colored by genre
+    plt.figure(figsize=(10, 8))
+    sns.scatterplot(x='PCA1', y='PCA2', hue='Genre', palette='Set2', data=pca_df)
+    plt.title('PCA Projection of Text Statistics (2D) - Colored by Genre')
+    plt.show()
+
+    return pca_df, pca
+
+def get_text_statistics(df, text_col):
+    """
+    Calculate descriptive statistics for a text column, including token counts, sentence counts, document lengths, etc.
+    
+    Parameters:
+    df (pd.DataFrame): The input DataFrame.
+    text_col (str): The name of the text column.
+    
+    Returns:
+    pd.DataFrame: A DataFrame containing statistics for each document.
+    """
+    stats = {
+        "num_tokens_per_doc": [],
+        "num_sentences_per_doc": [],
+        "avg_sentence_length_per_doc": [],
+        "avg_doc_length": [],
+        "num_chars_per_doc": [],
+        "sentence_length_variance": []
+    }
+    
+    for text in df[text_col]:
+        # Tokenize by words and sentences
+        tokens = nltk.word_tokenize(text)
+        sentences = nltk.sent_tokenize(text)
+        
+        # Document level stats
+        stats["num_tokens_per_doc"].append(len(tokens))
+        stats["num_sentences_per_doc"].append(len(sentences))
+        stats["avg_sentence_length_per_doc"].append(len(tokens) / len(sentences) if len(sentences) > 0 else 0)
+        stats["avg_doc_length"].append(len(tokens))  # Total token count for document length
+        stats["num_chars_per_doc"].append(len(text))  # Total character count
+        
+        # Sentence length variance
+        sentence_lengths = [len(nltk.word_tokenize(sentence)) for sentence in sentences]
+        variance = np.var(sentence_lengths) if sentence_lengths else 0
+        stats["sentence_length_variance"].append(variance)
+
+    return pd.DataFrame(stats)
+
+def plot_histograms(stats):
+    """
+    Plot histograms for text statistics like token count distribution, sentence count distribution, etc.
+    
+    Parameters:
+    stats (dict): A dictionary containing the text statistics (from get_text_statistics).
+    """
+    # Plot token count distribution
+    plt.figure(figsize=(12, 5))
+    sns.histplot(stats["num_tokens_per_doc"], kde=True, bins=30)
+    plt.title('Distribution of Token Count per Document')
+    plt.xlabel('Number of Tokens')
+    plt.ylabel('Frequency')
+    plt.show()
+
+    # Plot sentence count distribution
+    plt.figure(figsize=(12, 5))
+    sns.histplot(stats["num_sentences_per_doc"], kde=True, bins=30)
+    plt.title('Distribution of Sentence Count per Document')
+    plt.xlabel('Number of Sentences')
+    plt.ylabel('Frequency')
+    plt.show()
+
+    # Plot average sentence length per document
+    plt.figure(figsize=(12, 5))
+    sns.histplot(stats["avg_sentence_length_per_doc"], kde=True, bins=30)
+    plt.title('Average Sentence Length per Document')
+    plt.xlabel('Average Sentence Length')
+    plt.ylabel('Frequency')
+    plt.show()
+
+    # Plot average document length (number of tokens)
+    plt.figure(figsize=(12, 5))
+    sns.histplot(stats["avg_doc_length"], kde=True, bins=30)
+    plt.title('Average Document Length (Token Count)')
+    plt.xlabel('Document Length (Number of Tokens)')
+    plt.ylabel('Frequency')
+    plt.show()
+
+def plot_boxplots(stats):
+    """
+    Plot boxplots for text statistics like token count, sentence count, etc.
+    
+    Parameters:
+    stats (dict): A dictionary containing the text statistics (from get_text_statistics).
+    """
+    # Boxplot for token count per document
+    plt.figure(figsize=(12, 5))
+    sns.boxplot(x=stats["num_tokens_per_doc"])
+    plt.title('Boxplot of Token Count per Document')
+    plt.xlabel('Number of Tokens')
+    plt.show()
+
+    # Boxplot for sentence count per document
+    plt.figure(figsize=(12, 5))
+    sns.boxplot(x=stats["num_sentences_per_doc"])
+    plt.title('Boxplot of Sentence Count per Document')
+    plt.xlabel('Number of Sentences')
+    plt.show()
+
+    # Boxplot for average sentence length per document
+    plt.figure(figsize=(12, 5))
+    sns.boxplot(x=stats["avg_sentence_length_per_doc"])
+    plt.title('Boxplot of Average Sentence Length per Document')
+    plt.xlabel('Average Sentence Length')
+    plt.show()
+
+    # Boxplot for document length (number of tokens)
+    plt.figure(figsize=(12, 5))
+    sns.boxplot(x=stats["avg_doc_length"])
+    plt.title('Boxplot of Document Length (Token Count)')
+    plt.xlabel('Document Length (Number of Tokens)')
+    plt.show()
