@@ -7,6 +7,8 @@ from nltk.tokenize import word_tokenize
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 from textblob import TextBlob
+from rapidfuzz import fuzz
+
 
 
 def read_data(path: str, columns: list[str]) -> pd.DataFrame:
@@ -112,7 +114,7 @@ def find_similar_descriptions(df, description_column, cosine_threshold=0.8, jacc
         for j in range(i + 1, cosine_sim.shape[0]):
             if cosine_sim[i, j] >= cosine_threshold:
                 candidate_pairs.append((i, j, cosine_sim[i, j]))
-
+    
     final_similar_pairs = []
     for i, j, cos_sim in candidate_pairs:
         set1 = tokenize(df.loc[i, description_column])
@@ -140,3 +142,45 @@ def print_differences(df, similar_pairs, column_name):
         value_j = df.loc[j, column_name]
         if value_i != value_j:
             print(f"{value_i} ({i}) and {value_j} ({j}) : (Cosine {cos_sim:.4f}, Jaccard {jac_sim:.4f})")
+
+
+def validate_and_filter_duplicates_fuzzy(df, similar_pairs, columns_to_check, threshold=80):
+    """
+    Validates potential duplicates by fuzzy matching additional columns and drops the entry with the shorter description.
+    Keeps the entry containing the description with more information.
+
+    Parameters:
+    df (pd.DataFrame): The original DataFrame.
+    similar_pairs (list): List of tuples containing similar description pairs and their similarities.
+    columns_to_check (list): List of column names to validate against.
+    threshold (int): Fuzzy matching score threshold (0-100).
+    
+    Returns:
+    pd.DataFrame: The DataFrame with duplicates removed.
+    """
+    # Set to store indices to drop
+    index_drop = set()
+
+    for i, j, cos_sim, jac_sim in similar_pairs:
+        match = True
+
+        for col in columns_to_check:
+            value_i = str(df.loc[i, col])
+            value_j = str(df.loc[j, col])
+            
+            similarity_score = fuzz.ratio(value_i, value_j)
+            
+            if similarity_score < threshold:
+                match = False
+                break
+        
+        if match:
+            if len(df.loc[i, 'description']) <= len(df.loc[j, 'description']):
+                index_drop.add(i)
+            else:
+                index_drop.add(j)
+    
+
+    df = df.drop(index=index_drop)
+    
+    return df
