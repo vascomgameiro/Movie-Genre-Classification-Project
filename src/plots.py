@@ -263,3 +263,12 @@ def plot_boxplots(stats):
     plt.title("Boxplot of Document Length (Token Count)")
     plt.xlabel("Document Length (Number of Tokens)")
     plt.show()
+
+
+def plot_confusion_matrix(cm, decoded_class_names):
+    plt.figure(figsize=(8, 6))
+    sns.heatmap(cm, annot=True, fmt="d", cmap="Blues", xticklabels=decoded_class_names, yticklabels=decoded_class_names)
+    plt.ylabel("Actual")
+    plt.xlabel("Predicted")
+    plt.title("Confusion Matrix")
+    plt.show()
