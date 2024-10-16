@@ -11,3 +11,6 @@ skrub
 textblob
 mlextend
 rapidfuzz
+contractions
+langchain
+sentence_transformers
