@@ -130,7 +130,7 @@ def plot_pca_tfidf(df, text_column, genre_column):
 
     # Step 2: Standardize the TF-IDF data (optional but recommended for PCA)
     scaler = StandardScaler(with_mean=False)  # with_mean=False for sparse data
-    scaled_data = scaler.fit_transform(tfidf_matrix.toarray())
+    scaled_data = scaler.fit_transform(tfidf_matrix.toarray())  # type: ignore
 
     # Step 3: Apply PCA to reduce to 2 components
     pca = PCA(n_components=2)
