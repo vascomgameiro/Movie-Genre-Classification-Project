@@ -54,6 +54,6 @@ Our approach combines classical NLP techniques with modern embeddings and machin
 ## 📂 Repository Structure
 - **`data/`**: Contains training and test datasets.
 - **`src/`**: Contains Python scripts for data preprocessing, model training, and evaluation.
-- **`results/`**: Stores output files with predicted genres.
+- **`notebooks/`**: Contains a Jupyter Notebook describing all the project steps.
 - **`README.md`**: Project documentation (you are here!).
 - **`NLP_Report.pdf`**: Short paper summarizing the project.
