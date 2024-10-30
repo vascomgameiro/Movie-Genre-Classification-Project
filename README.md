@@ -1,79 +1,59 @@
-# Data Project Template
+# 🎬 Movie Genre Classification Project
 
-<a target="_blank" href="https://datalumina.com/">
-    <img src="https://img.shields.io/badge/Datalumina-Project%20Template-2856f7" alt="Datalumina Project" />
-</a>
+## 📜 Overview
+This project focuses on classifying movie plot descriptions into specific genres using Natural Language Processing (NLP) techniques and machine learning models. The task involves associating a genre to each movie plot from a dataset with genres such as **Drama, Comedy, Horror, Action, Romance, Western, Animation, Crime,** and **Sci-Fi**.
 
-## Cookiecutter Data Science
-This project template is a simplified version of the [Cookiecutter Data Science](https://cookiecutter-data-science.drivendata.org) template, created to suit the needs of Datalumina and made available as a GitHub template.
+Our approach combines classical NLP techniques with modern embeddings and machine learning models, specifically Histogram Gradient Boosting and Support Vector Classifiers, to create a robust genre classification pipeline.
 
-## Adjusting .gitignore
+## 🏆 Project Goals
+1. **Genre Classification**: Develop a model to accurately classify movie plots by genre.
+2. **Model Evaluation**: Evaluate model performance and aim to exceed baselines:
+   - Weak baseline: 37% accuracy
+   - Strong baseline: 62% accuracy
+3. **Critical Analysis**: Provide detailed analysis of data, model performance, and classification errors.
+4. **Future Directions**: Identify potential improvements for future iterations.
 
-Ensure you adjust the `.gitignore` file according to your project needs. For example, since this is a template, the `/data/` folder is commented out and data will not be exlucded from source control:
+## 📊 Data and Preprocessing
+### Data Sources
+- **Training Set**: Contains labeled plots with metadata (title, director, and genre).
+- **Test Set**: Provided without genre labels to evaluate final model predictions.
 
-```plaintext
-# exclude data from source control by default
-# /data/
-```
+### Preprocessing Techniques
+1. **Director Standardization**: Cleaned and standardized director names.
+2. **Text Tokenization and Lemmatization**: Tokenized plot descriptions, expanded contractions, and lemmatized tokens.
+3. **Feature Engineering**:
+   - Created region-based similarity features for directors.
+   - Used TF-IDF vectorization and truncated SVD for dimensionality reduction.
 
-Typically, you want to exclude this folder if it contains either sensitive data that you do not want to add to version control or large files.
+## 🚀 Model Pipeline
+### Models Implemented
+1. **Histogram Gradient Boosting Classifier** (HGBC) with dense vectors (achieved highest F1 macro-average).
+2. **Support Vector Classifier** (SVC) with sparse and dense embeddings.
 
-## Duplicating the .env File
-To set up your environment variables, you need to duplicate the `.env.example` file and rename it to `.env`. You can do this manually or using the following terminal command:
+### Embedding Techniques
+- **Sentence Embeddings**: GIST small Embedding model was used for embedding large text, with recursive chunking to handle long descriptions.
 
-```bash
-cp .env.example .env # Linux, macOS, Git Bash, WSL
-copy .env.example .env # Windows Command Prompt
-```
+### Evaluation
+- **Cross-validation** and **Randomized Search** for hyperparameter tuning.
+- Metrics: Accuracy, F1 scores per genre, and confusion matrix.
 
-This command creates a copy of `.env.example` and names it `.env`, allowing you to configure your environment variables specific to your setup.
+## 🔍 Experimental Results
+- **Best Model**: HGBC with sentence embeddings achieved 67.5% accuracy on the test set.
+- **Top F1 Scores**: Achieved high F1 scores for genres like Animation and Horror, but struggled with Romance due to plot length variations.
 
+## 🧩 Key Insights
+- **Class Imbalance**: Drama genre was significantly overrepresented, causing misclassification in minority genres.
+- **Plot Length Sensitivity**: Shorter descriptions resulted in higher misclassification rates, especially for genres like Romance.
+- **Error Analysis**: High-confidence misclassifications highlighted challenges in distinguishing genres with overlapping themes (e.g., Comedy and Drama).
 
-## Project Organization
+## 📝 Future Work
+1. **Metadata Utilization**: Incorporate director or release year as additional features.
+2. **Text Augmentation**: Explore data augmentation techniques to enhance minority genre representation.
+3. **Alternative Embeddings**: Test with embeddings like GloVe or FastText and compare with current results.
 
-```
-├── LICENSE            <- Open-source license if one is chosen
-├── README.md          <- The top-level README for developers using this project
-├── data
-│   ├── external       <- Data from third party sources
-│   ├── interim        <- Intermediate data that has been transformed
-│   ├── processed      <- The final, canonical data sets for modeling
-│   └── raw            <- The original, immutable data dump
-│
-├── models             <- Trained and serialized models, model predictions, or model summaries
-│
-├── notebooks          <- Jupyter notebooks. Naming convention is a number (for ordering),
-│                         the creator's initials, and a short `-` delimited description, e.g.
-│                         `1.0-jqp-initial-data-exploration`
-│
-├── references         <- Data dictionaries, manuals, and all other explanatory materials
-│
-├── reports            <- Generated analysis as HTML, PDF, LaTeX, etc.
-│   └── figures        <- Generated graphics and figures to be used in reporting
-│
-├── requirements.txt   <- The requirements file for reproducing the analysis environment, e.g.
-│                         generated with `pip freeze > requirements.txt`
-│
-└── src                         <- Source code for this project
-    │
-    ├── __init__.py             <- Makes src a Python module
-    │
-    ├── config.py               <- Store useful variables and configuration
-    │
-    ├── dataset.py              <- Scripts to download or generate data
-    │
-    ├── features.py             <- Code to create features for modeling
-    │
-    │    
-    ├── modeling                
-    │   ├── __init__.py 
-    │   ├── predict.py          <- Code to run model inference with trained models          
-    │   └── train.py            <- Code to train models
-    │
-    ├── plots.py                <- Code to create visualizations 
-    │
-    └── services                <- Service classes to connect with external platforms, tools, or APIs
-        └── __init__.py 
-```
-
---------
+## 📂 Repository Structure
+- **`data/`**: Contains training and test datasets.
+- **`src/`**: Contains Python scripts for data preprocessing, model training, and evaluation.
+- **`results/`**: Stores output files with predicted genres.
+- **`README.md`**: Project documentation (you are here!).
+- **`NLP_Report.pdf`**: Short paper summarizing the project.
