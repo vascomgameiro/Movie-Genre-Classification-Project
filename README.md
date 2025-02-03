@@ -41,16 +41,6 @@ Our approach combines classical NLP techniques with modern embeddings and machin
 - **Best Model**: HGBC with sentence embeddings achieved 67.5% accuracy on the test set.
 - **Top F1 Scores**: Achieved high F1 scores for genres like Animation and Horror, but struggled with Romance due to plot length variations.
 
-## 🧩 Key Insights
-- **Class Imbalance**: Drama genre was significantly overrepresented, causing misclassification in minority genres.
-- **Plot Length Sensitivity**: Shorter descriptions resulted in higher misclassification rates, especially for genres like Romance.
-- **Error Analysis**: High-confidence misclassifications highlighted challenges in distinguishing genres with overlapping themes (e.g., Comedy and Drama).
-
-## 📝 Future Work
-1. **Metadata Utilization**: Incorporate director or release year as additional features.
-2. **Text Augmentation**: Explore data augmentation techniques to enhance minority genre representation.
-3. **Alternative Embeddings**: Test with embeddings like GloVe or FastText and compare with current results.
-
 ## 📂 Repository Structure
 - **`data/`**: Contains training and test datasets.
 - **`src/`**: Contains Python scripts for data preprocessing, model training, and evaluation.
